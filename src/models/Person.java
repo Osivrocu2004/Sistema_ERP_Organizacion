@@ -2,27 +2,44 @@ package models;
 
 public class Person {
 
-    private int id_person;
-    private String nameLastName;
+    private String id_person;
+    private String fistName;
+    private String lastName;
 
-    public Person(int id_person, String nameLastName) {
+    public Person(String id_person, String fistName, String lastName) {
         this.id_person = id_person;
-        this.nameLastName = nameLastName;
+        this.fistName = fistName;
+        this.lastName = lastName;
     }
 
-    public int getId_person() {
+    public String getId_person() {
         return id_person;
     }
 
-    public void setId_person(int id_person) {
+    public void setId_person(String id_person) {
         this.id_person = id_person;
     }
 
-    public String getNameLastName() {
-        return nameLastName;
+    public String getFistName() {
+        return fistName;
     }
 
-    public void setNameLastName(String nameLastName) {
-        this.nameLastName = nameLastName;
+    public void setFistName(String fistName) {
+        this.fistName = fistName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        return "Id_persona: " + id_person +
+                ", Nombre: " + fistName + '\'' +
+                ", Apellido: " + lastName;
     }
 }

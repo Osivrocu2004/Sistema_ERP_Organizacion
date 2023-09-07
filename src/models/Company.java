@@ -13,4 +13,28 @@ public class Company {
         this.codeCompany = codeCompany;
         this.campusCompany = campusCompany;
     }
+
+    public String getNameCompany() {
+        return nameCompany;
+    }
+
+    public void setNameCompany(String nameCompany) {
+        this.nameCompany = nameCompany;
+    }
+
+    public String getCodeCompany() {
+        return codeCompany;
+    }
+
+    public void setCodeCompany(String codeCompany) {
+        this.codeCompany = codeCompany;
+    }
+
+    public List<Campus> getCampusCompany() {
+        return campusCompany;
+    }
+
+    public void setCampusCompany(List<Campus> campusCompany) {
+        this.campusCompany = campusCompany;
+    }
 }
