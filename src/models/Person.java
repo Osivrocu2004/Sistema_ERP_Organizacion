@@ -39,7 +39,7 @@ public class Person {
     @Override
     public String toString() {
         return "Id_persona: " + id_person +
-                ", Nombre: " + fistName + '\'' +
+                ", Nombre: " + fistName +
                 ", Apellido: " + lastName;
     }
 }

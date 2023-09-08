@@ -1,5 +1,7 @@
 package presenters;
 
+import enums.TypeJob;
+import models.Employee;
 import models.Person;
 import views.View;
 
@@ -11,6 +13,7 @@ import java.util.List;
 
 public class Presenter {
     private static List<Person> personList = new ArrayList<>();
+    private static List<Employee> employeeList = new ArrayList<>();
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private View view;
 
@@ -33,10 +36,10 @@ public class Presenter {
                         view.showMenuPerson();
                         opcionSubMenu = leerOpcion();
                         switch(opcionSubMenu) {
-                            case 1 -> verPersonasRegistradas();
-                            case 2 -> registrarEstudiante();
-                            case 3 -> modificarEstudiante();
-                            case 4 -> eliminarEstudiante();
+                            case 1 -> showRegisterPerson();
+                            case 2 -> registerPerson();
+                            case 3 -> changePerson();
+                            case 4 -> deletePerson();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
@@ -44,56 +47,19 @@ public class Presenter {
                 }
                 case 2 -> {
                     do {
-                        view.showMenuProgram();
+                        view.showMenuEmployees();
                         opcionSubMenu = leerOpcion();
                         switch (opcionSubMenu) {
                             case 1 -> crearProgramaAcademico();
                             case 2 -> modificarProgramaAcademico();
                             case 3 -> eliminarProgramaAcademico();
-                            case 4 -> verProgramasAcademicosRegistrados();
+                            case 4 -> showRegisterEmployees();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
                     }while(opcionSubMenu != 0);
                 }
-                case 3 -> {
-                    do{
-                        view.showMenuSubject();
-                        opcionSubMenu = leerOpcion();
-                        switch (opcionSubMenu) {
-                            case 1 -> crearAsignatura();
-                            case 2 -> modificarAsignatura();
-                            case 3 -> eliminarAsignatura();
-                            case 4 -> verAsignaturasRegistradas();
-                            case 0 -> view.showBye();
-                            default -> view.showInvalidateOption();
-                        }
-                    }while(opcionSubMenu != 0);
-                }
-                case 4 -> {
-                    do{
-                        view.showMenuRegisterStudentProgram();
-                        opcionSubMenu = leerOpcion();
-                        switch (opcionSubMenu) {
-                            case 1 -> matricularEstudiante_programa();
-                            case 2 -> verEstudiantesMatriculados_programa();
-                            case 3 -> eliminar_Matricula_Estudiante_programa();
-                            case 0 -> view.showBye();
-                            default -> view.showInvalidateOption();
-                        }
-                    }while(opcionSubMenu != 0);
-                }
-                case 5 ->{
-                    do{
-                        view.showMenuRegisterStudentSubject();
-                        opcionSubMenu = leerOpcion();
-                        switch (opcionSubMenu) {
-                            case 1 -> matricularEstudiante_asigantura();
-                            case 2 -> verEstudiantesMatriculadosEnAsignatura();
-                            case 3 -> eliminarEstudianteDeAsignatura();
-                        }
-                    }while(opcionSubMenu != 0);
-                }
+
                 case 0 ->
                         view.showBye();
                 default ->
@@ -102,7 +68,6 @@ public class Presenter {
 
             }
         } while (opcionMainMenu != 0);
-
     }
 
     private static int leerOpcion() {
@@ -128,9 +93,9 @@ public class Presenter {
         return opcion;
     }
 
-    private static void verPersonasRegistradas() {                       //método para leer lista de personas
+    public void showRegisterPerson() {                       //método para leer lista de personas
         if (personList.isEmpty()) {                                        //Verifica si la lista de personas está vacía
-            System.out.println("No hay Personas registradas.");
+            view.noRegisteredPerson();
         } else {
             System.out.println("=== Personas Registradas ===");
             int index = 0;
@@ -141,7 +106,7 @@ public class Presenter {
         }
     }
 
-    private static void registrarEstudiante() {
+    private static void registerPerson() {
         System.out.println("=== Registrar Personas ===");
 
         // Declaración de variables para almacenar los datos del estudiante
@@ -153,13 +118,13 @@ public class Presenter {
         while (true) {
             // Si la identificación del estudiante aún no se ha ingresado
             if (id_person == null) {
-                System.out.print("Identificación Persona: ");
+                System.out.print("Id Persona: ");
                 id_person = leerCadenaNoVacia();
 
                 // Validar si el estudiante ya está registrado por identificación
                 for (Person person : personList) {
                     if (person.getId_person().equalsIgnoreCase(id_person)) {
-                        System.out.println("El estudiante con esta identificación ya está registrado.");
+                        System.out.println("Ya se encuentra una persona con esta identificación ya registrada.");
                         id_person = null; // Reiniciar para volver a pedir el dato
                         break;
                     }
@@ -170,19 +135,160 @@ public class Presenter {
                 fistName = leerCadenaNoVaciaTexto();
             } // Si el correo electrónico del estudiante aún no se ha ingresado
             else if (lastName == null) {
-                System.out.print("Correo Electrónico: ");
+                System.out.print("Apellidos: ");
                 lastName = leerCadenaNoVaciaTexto();
             }
 
-            // Si se han ingresado todos los datos requeridos, registrar el estudiante
+            // Si se han ingresado todos los datos requeridos, registrar la persona
             if (id_person != null && fistName != null && lastName != null) {
                 personList.add(new Person(id_person, fistName, lastName));
-                System.out.println("Estudiante registrado exitosamente.");
+                System.out.println("Persona registrado exitosamente.");
                 //guardarEstudiantesEnArchivo();
                 break; // Salir del bucle en caso de éxito
             }
         }
     }
+    private static void changePerson() {
+        System.out.println("=== Modificar Registro de Estudiante ===");
+
+        // Verificar si hay estudiantes registrados
+        if (personList.isEmpty()) {
+            System.out.println("No hay estudiantes registrados.");
+            return;
+        }
+
+        // Mostrar la lista de personas registradas
+        showRegisterPerson();
+
+        // Solicitar al usuario que ingrese el índice del estudiante que desea modificar
+        System.out.print("Ingrese el índice del estudiante que desea modificar: ");
+        int indice = leerIndiceValido(personList.size());
+        Person personaSeleccionada = personList.get(indice);
+
+        // Inicializar variables con los valores actuales del estudiante seleccionado
+        String nuevoIdPersona = personaSeleccionada.getId_person();
+        String nuevoNombrePersona = personaSeleccionada.getFistName();
+        String nuevoApellidoPersona = personaSeleccionada.getLastName();
+
+        // Solicitar al usuario que ingrese el nuevo código de estudiante
+        while (true) {
+            System.out.print("Nuevo ID de la Persona (" + nuevoIdPersona + "): ");
+            String input = leerCodigoNumerico();
+            boolean idPersonaRegistrada = false;
+            if (!input.isEmpty()) {
+                for (Person person : personList) {
+                    if (person.getId_person().equals(input) && !person.getId_person().equals(nuevoIdPersona)) {
+                        System.out.println("La persona con este código ya está registrado.");
+                        idPersonaRegistrada = true;
+                        break;
+                    }
+                }
+                if (!idPersonaRegistrada) {
+                    nuevoIdPersona = input;
+                    break;
+                }
+            } else {
+                System.out.println("No se permiten campos vacíos. Intente nuevamente.");
+            }
+        }
+
+        // Solicitar al usuario que ingrese el nuevo nombre
+        while (true) {
+            System.out.print("Nuevo Nombres (" + nuevoNombrePersona + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            if (!input.isEmpty()) {
+                nuevoNombrePersona = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            }
+        }
+        // Solicitar al usuario que ingrese el nuevo apellido
+        while (true) {
+            System.out.print("Nuevo Nombres (" + nuevoApellidoPersona + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            if (!input.isEmpty()) {
+                nuevoApellidoPersona = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            }
+        }
+
+        // Actualizar los datos del estudiante con los valores nuevos
+        personaSeleccionada.setId_person(nuevoIdPersona);
+        personaSeleccionada.setFistName(nuevoNombrePersona);
+        personaSeleccionada.setLastName(nuevoApellidoPersona);
+
+        System.out.println("Estudiante modificado exitosamente.");
+        //guardarEstudiantesEnArchivo();
+    }
+
+    private static void deletePerson() {                                      //método para eliminar estudiantes registrados de la lista estudiantes
+        System.out.println("=== Eliminar Registro de Estudiante ===");
+        if (personList.isEmpty()) {
+            System.out.println("No hay estudiantes registrados.");
+            return;
+        }
+        showRegisterPerson();
+        System.out.print("Ingrese el índice del estudiante que desea eliminar: ");
+        int indice = leerIndiceValido(personList.size());
+        personList.remove(indice);
+        System.out.println("Estudiante eliminado exitosamente.");
+        //guardarEstudiantesEnArchivo();
+    }
+
+    private static void showRegisterEmployees() {
+        System.out.println("=== Empleados Registrados ===");
+
+        if (employeeList.isEmpty()) {
+            System.out.println("No hay empleados registrados.");
+        } else {
+            int index = 0;
+            for (Employee employee : employeeList) {
+                System.out.println("Índice " + index + ": " + employee.getPerson_employees() + " (Cargo: " + employee.getJobTitle() + ")");
+                index++;
+            }
+        }
+    }
+
+    private static void matricularEstudiante_programa() {
+        System.out.println("=== EMPLEADO - PERSONA ===");
+
+        if (personList.isEmpty()) {
+            System.out.println("No hay personas registradas.");
+            return;
+        }
+
+        showRegisterPerson();
+
+        System.out.print("Ingrese el índice del estudiante que desea matricular: ");
+        int indexPerson = leerIndiceValido(personList.size());
+
+        Person estudianteSeleccionado = personList.get(indexPerson);
+
+        System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)");
+
+        System.out.print("Ingrese la inicial del cargo en el que desea registrar a la persona: ");
+
+        String indicePrograma = leerCadenaNoVacia();
+        //TODO Hacer que se vincule la persona con el cargo y quede como empledao
+        Employee programaSeleccionado = employeeList.get(indicePrograma);
+
+        // Validar si el estudiante ya está matriculado en el programa
+        boolean estudianteMatriculado = programaSeleccionado.estudiantes_matriculados_programa.contains(estudianteSeleccionado);
+
+        if (estudianteMatriculado) {
+            System.out.println("El estudiante ya está matriculado en este programa.");
+        } else {
+            programaSeleccionado.Estudiantes_matriculados_programa(estudianteSeleccionado);
+            System.out.println("Estudiante matriculado exitosamente en el programa académico.");
+        }
+    }
+
+
+
+
     private static String leerCadenaNoVacia() {
         String input;
         while (true) {
@@ -206,6 +312,39 @@ public class Presenter {
                     return input;
                 }
                 System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            } catch (IOException e) {
+                System.out.println("Error al leer la entrada.");
+            }
+        }
+    }
+
+    private static int leerIndiceValido(int maximo) {
+        int indice;
+        while (true) {
+            try {
+                System.out.print("Ingrese un índice válido: ");
+                String input = reader.readLine().trim();
+                indice = Integer.parseInt(input);
+                if (indice >= 0 && indice < maximo) {
+                    break;
+                }
+                System.out.println("Índice no válido. Intente nuevamente.");
+            } catch (NumberFormatException | IOException e) {
+                System.out.println("Error: Ingrese un número válido.");
+            }
+        }
+        return indice;
+    }
+
+    private static String leerCodigoNumerico() {
+        String input;
+        while (true) {
+            try {
+                input = reader.readLine().trim();
+                if (!input.isEmpty() && input.matches("^[0-9]+$")) { // Verifica que la entrada contenga solo números
+                    return input;
+                }
+                System.out.println("Ingrese un valor válido (solo números). Intente nuevamente.");
             } catch (IOException e) {
                 System.out.println("Error al leer la entrada.");
             }
