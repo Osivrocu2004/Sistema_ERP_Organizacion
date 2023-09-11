@@ -2,19 +2,19 @@ package models;
 
 public class JobTitle {
 
-    private String idJobTitle;
+    private int idJobTitle;
     private String nameJobTitle;
 
-    public JobTitle(String idJobTitle, String nameJobTitle) {
+    public JobTitle(int idJobTitle, String nameJobTitle) {
         this.idJobTitle = idJobTitle;
         this.nameJobTitle = nameJobTitle;
     }
 
-    public String getIdJobTitle() {
+    public int getIdJobTitle() {
         return idJobTitle;
     }
 
-    public void setIdJobTitle(String idJobTitle) {
+    public void setIdJobTitle(int idJobTitle) {
         this.idJobTitle = idJobTitle;
     }
 

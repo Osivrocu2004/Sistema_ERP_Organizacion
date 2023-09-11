@@ -2,6 +2,7 @@ package presenters;
 
 import enums.TypeJob;
 import models.Employee;
+import models.JobTitle;
 import models.Person;
 import views.View;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class Presenter {
     private static List<Person> personList = new ArrayList<>();
     private static List<Employee> employeeList = new ArrayList<>();
+
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private View view;
 
@@ -50,16 +52,16 @@ public class Presenter {
                         view.showMenuEmployees();
                         opcionSubMenu = leerOpcion();
                         switch (opcionSubMenu) {
-                            case 1 -> crearProgramaAcademico();
-                            case 2 -> modificarProgramaAcademico();
-                            case 3 -> eliminarProgramaAcademico();
+                            case 1 -> matricularEstudiante_programa();
+                            //case 2 -> modificarProgramaAcademico();
+                            //case 3 -> eliminarProgramaAcademico();
                             case 4 -> showRegisterEmployees();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
                     }while(opcionSubMenu != 0);
                 }
- 
+
                 case 0 ->
                         view.showBye();
                 default ->
@@ -148,7 +150,7 @@ public class Presenter {
             }
         }
     }
-    private static void changePerson() {
+    public void changePerson() {
         System.out.println("=== Modificar Registro de Estudiante ===");
 
         // Verificar si hay estudiantes registrados
@@ -224,7 +226,7 @@ public class Presenter {
         //guardarEstudiantesEnArchivo();
     }
 
-    private static void deletePerson() {                                      //método para eliminar estudiantes registrados de la lista estudiantes
+    public void deletePerson() {                                      //método para eliminar estudiantes registrados de la lista estudiantes
         System.out.println("=== Eliminar Registro de Estudiante ===");
         if (personList.isEmpty()) {
             System.out.println("No hay estudiantes registrados.");
@@ -252,7 +254,7 @@ public class Presenter {
         }
     }
 
-    private static void matricularEstudiante_programa() {
+    public void matricularEstudiante_programa() {
         System.out.println("=== EMPLEADO - PERSONA ===");
 
         if (personList.isEmpty()) {
@@ -265,26 +267,35 @@ public class Presenter {
         System.out.print("Ingrese el índice del estudiante que desea matricular: ");
         int indexPerson = leerIndiceValido(personList.size());
 
-        Person estudianteSeleccionado = personList.get(indexPerson);
+        Person person = personList.get(indexPerson);
 
-        System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)");
+        System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)" +
+                "\nIngrese el número del cargo en el que desea registrar a la persona: ");
 
-        System.out.print("Ingrese la inicial del cargo en el que desea registrar a la persona: ");
+        int indexJobTitle = leerIndiceValido(TypeJob.values().length);
+        String jobTitle = "";
+        switch (indexJobTitle){
+            case 1 -> jobTitle = String.valueOf(TypeJob.DIRECTIVO);
+        }
 
-        String indicePrograma = leerCadenaNoVacia();
-        //TODO Hacer que se vincule la persona con el cargo y quede como empledao
-        Employee programaSeleccionado = employeeList.get(indicePrograma);
 
+
+        int idCount = 0;
+
+
+        Employee selectEmployee = new Employee(new JobTitle(idCount,jobTitle),person);
+        //TODO REVISAR COMO ASOCIAR A LA PERSONA PARA QUE SEA EMPLEADO! ESTA BOTANDO NullPointerException EN LA SENTENCIA 289
         // Validar si el estudiante ya está matriculado en el programa
-        boolean estudianteMatriculado = programaSeleccionado.estudiantes_matriculados_programa.contains(estudianteSeleccionado);
+        boolean estudianteMatriculado = selectEmployee.getPerson_employees().contains(selectEmployee);
 
         if (estudianteMatriculado) {
             System.out.println("El estudiante ya está matriculado en este programa.");
         } else {
-            programaSeleccionado.Estudiantes_matriculados_programa(estudianteSeleccionado);
+            selectEmployee.person_assigned_employee(selectEmployee);
             System.out.println("Estudiante matriculado exitosamente en el programa académico.");
         }
     }
+
 
 
 
