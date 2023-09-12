@@ -14,6 +14,8 @@ public class View {
             "\n4. Modificar registro sede\n5. Eliminar registro sede\n0. Salir";
     public static final String NOT_REGISTERED_PERSON = "No hay Personas registradas.";
 
+    public static final String MENU_COMPANY = "=== MENÚ - EMPRESA ===\n1. Ver empresas registradas\n2. Registrar una nueva empresa" +
+            "\n3. Modificar registro empresa\n4. Eliminar registro empresa\n0. Salir";
     public static final String NOT_REGISTERED_EMPLOYEE= "No hay empleados registradas.";
 
 
@@ -32,8 +34,9 @@ public class View {
         System.out.println(MENU_CAMPUS);
     }
 
-
-
+    public void showMenuCompany(){
+        System.out.println(MENU_COMPANY);
+    }
     public void enterOption(){
         System.out.print("Ingrese una opción: ");
     }

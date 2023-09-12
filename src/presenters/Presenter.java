@@ -1,10 +1,7 @@
 package presenters;
 
 import enums.TypeJob;
-import models.Campus;
-import models.Employee;
-import models.JobTitle;
-import models.Person;
+import models.*;
 import views.View;
 
 import javax.sound.midi.Soundbank;
@@ -17,8 +14,9 @@ import java.util.List;
 public class Presenter {
     private static List<Person> personList;
     private static List<Employee> employeeList;
-
     private static List<Campus> campusList;
+
+    private static List<Company> companyList;
     private static BufferedReader reader;
     private View view;
 
@@ -28,6 +26,7 @@ public class Presenter {
         personList = new ArrayList<>();
         employeeList = new ArrayList<>();
         campusList = new ArrayList<>();
+        companyList = new ArrayList<>();
         reader = new BufferedReader(new InputStreamReader(System.in));
     }
 
@@ -83,7 +82,20 @@ public class Presenter {
                         }
                     }while(opcionSubMenu != 0);
                 }
-
+                case 4 -> {
+                    do {
+                        view.showMenuCompany();
+                        opcionSubMenu = leerOpcion();
+                        switch (opcionSubMenu) {
+                            case 1 -> showRegisterCompany();
+                            case 2 -> registerCompany();
+                            case 3 -> registerCampus();
+                            case 4 -> modifyCampus();
+                            case 0 -> view.showBye();
+                            default -> view.showInvalidateOption();
+                        }
+                    }while(opcionSubMenu != 0);
+                }
                 case 0 ->
                         view.showBye();
                 default ->
@@ -308,54 +320,6 @@ public class Presenter {
     }
 
 
-    private static void registerCampus() {
-        System.out.println("=== Registrar Sedes ===");
-
-        String nameCampus= null;
-        String codeCampus = null;
-        boolean centralCampus = false;
-        List<Employee> employeList = new ArrayList<>();
-
-        // Ciclo para validar y registrar los datos del estudiante
-        while (true) {
-            // Si el codigo del campus no se ha registrado
-            if (codeCampus == null) {
-                System.out.print("Id Sede: ");
-                codeCampus = leerCadenaNoVacia();
-
-                // Validar si el campus ya esta registrado codeCampus
-                for (Campus campus : campusList) {
-                    if (campus.getCodeCampus().equalsIgnoreCase(codeCampus)) {
-                        System.out.println("Ya se encuentra una sede con el codigo proporcionado");
-                        codeCampus= null; // Reiniciar para volver a pedir el dato
-                        break;
-                    }
-                }
-            } // Si el nombre de la sede no se ha ingresado
-            else if (nameCampus == null) {
-                System.out.print("Nombres: ");
-                nameCampus = leerCadenaNoVaciaTexto();
-            } // Validar si es la sede principal
-            else if(centralCampus == false){
-                String auxCode = null;
-                System.out.println("Este es el campus central (SI/NO):");
-                auxCode = leerCadenaNoVacia();
-                if (auxCode.equalsIgnoreCase("si")) {
-                    centralCampus = true;
-                }else{
-                  centralCampus = false;
-                }
-            }
-
-            // Si se han ingresado todos los datos requeridos, registrar la persona
-            if (codeCampus != null && nameCampus!= null) {
-                campusList.add(new Campus(nameCampus, codeCampus, centralCampus,employeList));
-                System.out.println("Campus registrado exitosamente");
-                //guardarCampusEnArchivo();
-                break; // Salir del bucle en caso de éxito
-            }
-        }
-    }
     public void registerEmployeeCampus() {
         System.out.println("=== EMPLEADO - SEDE ===");
         if (employeeList.isEmpty()) {
@@ -420,6 +384,53 @@ public class Presenter {
         }
     }
 
+    private static void registerCampus() {
+        System.out.println("=== Registrar Sedes ===");
+
+        String nameCampus= null;
+        String codeCampus = null;
+        boolean centralCampus = false;
+
+        // Ciclo para validar y registrar los datos del estudiante
+        while (true) {
+            // Si el codigo del campus no se ha registrado
+            if (codeCampus == null) {
+                System.out.print("Id Sede: ");
+                codeCampus = leerCadenaNoVacia();
+
+                // Validar si el campus ya esta registrado codeCampus
+                for (Campus campus : campusList) {
+                    if (campus.getCodeCampus().equalsIgnoreCase(codeCampus)) {
+                        System.out.println("Ya se encuentra una sede con el codigo proporcionado");
+                        codeCampus= null; // Reiniciar para volver a pedir el dato
+                        break;
+                    }
+                }
+            } // Si el nombre de la sede no se ha ingresado
+            else if (nameCampus == null) {
+                System.out.print("Nombres: ");
+                nameCampus = leerCadenaNoVaciaTexto();
+            } // Validar si es la sede principal
+            else if(centralCampus == false){
+                String auxCode = null;
+                System.out.println("Este es el campus central (SI/NO):");
+                auxCode = leerCadenaNoVacia();
+                if (auxCode.equalsIgnoreCase("si")) {
+                    centralCampus = true;
+                }else{
+                    centralCampus = false;
+                }
+            }
+
+            // Si se han ingresado todos los datos requeridos, registrar la persona
+            if (codeCampus != null && nameCampus!= null) {
+                campusList.add(new Campus(nameCampus, codeCampus, centralCampus, employeeList));
+                System.out.println("Sede registrada exitosamente");
+                //guardarCampusEnArchivo();
+                break; // Salir del bucle en caso de éxito
+            }
+        }
+    }
     private static void showCampusCentral(){
         System.out.println("=== Sedes principales ===");
         if(campusList.isEmpty()) {
@@ -455,6 +466,7 @@ public class Presenter {
         String newNameCampus = campusSelected.getNameCampus();
         String newCodeCampus = campusSelected.getCodeCampus();
         boolean newCentralCampus = campusSelected.isCentralCampus();
+
 
         while (true) {
             System.out.print("Nuevo Nombre de la sede (" + newNameCampus + "): ");
@@ -511,6 +523,57 @@ public class Presenter {
         int indice = leerIndiceValido(campusList.size());
         campusList.remove(indice);
         System.out.println("Sede eliminada exitosamente.");
+    }
+
+    private static void showRegisterCompany() {
+        System.out.println("=== Empresas Registradas ===");
+
+        if (companyList.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+        } else {
+            int index = 0;
+            for (Company company : companyList) {
+                System.out.println("Índice " + index + ": " + company);
+                index++;
+            }
+        }
+    }
+    private static void registerCompany() {
+        System.out.println("=== Registrar Empresa ===");
+
+        String nameCompany= null;
+        String codeCompany = null;
+
+        // Ciclo para validar y registrar los datos del estudiante
+        while (true) {
+            // Si el codigo del campus no se ha registrado
+            if (codeCompany == null) {
+                System.out.print("Id Empresa: ");
+                codeCompany = leerCadenaNoVacia();
+
+                // Validar si el campus ya esta registrado codeCampus
+                for (Company company : companyList) {
+                    if (company.getCodeCompany().equalsIgnoreCase(codeCompany)) {
+                        System.out.println("Ya se encuentra una empresa con el codigo proporcionado");
+                        codeCompany= null; // Reiniciar para volver a pedir el dato
+                        break;
+                    }
+                }
+            } // Si el nombre de la sede no se ha ingresado
+            else if (nameCompany == null) {
+                System.out.print("Nombre: ");
+                nameCompany = leerCadenaNoVaciaTexto();
+            } // Validar si es la sede principal
+
+
+            // Si se han ingresado todos los datos requeridos, registrar la persona
+            if (codeCompany != null && nameCompany!= null) {
+                companyList.add(new Company(nameCompany, codeCompany, campusList));
+                System.out.println("Empresa registrada exitosamente");
+                //guardarCampusEnArchivo();
+                break; // Salir del bucle en caso de éxito
+            }
+        }
     }
 
     private static String leerCadenaNoVacia() {
