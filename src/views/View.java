@@ -9,9 +9,9 @@ public class View {
     public static final String MENU_EMPLOYEE = "=== MENÚ - EMPLEADO ===\n1. Ver empleados registrados\n2. Registrar un nuevo empleado" +
             "\n3. Modificar registro empleado\n4. Eliminar registro empleado\n0. Salir";
 
-    public static final String MENU_CAMPUS = "=== MENÚ - SEDE ===\n1. Ver sedes registrados \n2. Ver sedes principal \n3. Asignar sede principal\n" +
-            "\n4. Registrar una nueva sede" +
-            "\n5. Modificar registro sede\n6. Eliminar registro sede\n0. Salir";
+    public static final String MENU_CAMPUS = "=== MENÚ - SEDE ===\n1. Ver sedes registrados \n2. Ver sedes principales \n" +
+            "\n3. Registrar una nueva sede" +
+            "\n4. Modificar registro sede\n5. Eliminar registro sede\n0. Salir";
     public static final String NOT_REGISTERED_PERSON = "No hay Personas registradas.";
 
     public static final String NOT_REGISTERED_EMPLOYEE= "No hay empleados registradas.";

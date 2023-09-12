@@ -7,6 +7,7 @@ import models.JobTitle;
 import models.Person;
 import views.View;
 
+import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -72,12 +73,11 @@ public class Presenter {
                         view.showMenuCampus();
                         opcionSubMenu = leerOpcion();
                         switch (opcionSubMenu) {
-                            case 1 -> registerCampus();
-                            //case 2 -> modificarProgramaAcademico();
-                            //case 3 -> eliminarProgramaAcademico();
-                            case 4 -> showRegisterEmployees();
-                            //case 5 ->
-                            //case 6 ->
+                            case 1 -> showRegisterCampus();
+                            case 2 -> showCampusCentral();
+                            case 3 -> registerCampus();
+                            case 4 -> modifyCampus();
+                            case 5 -> deleteRegisterCampus();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
@@ -419,6 +419,100 @@ public class Presenter {
             }
         }
     }
+
+    private static void showCampusCentral(){
+        System.out.println("=== Sedes principales ===");
+        if(campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas");
+        }else{
+            int index = 0;
+            for (Campus campus : campusList) {
+                if(campus.isCentralCampus() == true) {
+                    System.out.println("Índice " + index + ": " + campus);
+                    index++;
+                }else{
+                    System.out.println("No hay Sedes principales registradas");
+                }
+            }
+        }
+    }
+
+    private static void modifyCampus() {
+        System.out.println("=== Modificar SEDE ===");
+
+        if (campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas.");
+            return;
+        }
+
+       showRegisterCampus();
+
+        System.out.print("Ingrese el índice de la sede que desea modificar: ");
+        int indexCampus = leerIndiceValido(campusList.size());
+
+        Campus campusSelected = campusList.get(indexCampus);
+
+        String newNameCampus = campusSelected.getNameCampus();
+        String newCodeCampus = campusSelected.getCodeCampus();
+        boolean newCentralCampus = campusSelected.isCentralCampus();
+
+        while (true) {
+            System.out.print("Nuevo Nombre de la sede (" + newNameCampus + "): ");
+            String input = leerCadenaNoVaciaTextoPunto();
+            if (!input.isEmpty()) {
+                newNameCampus = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (texto y puntos). Intente nuevamente.");
+            }
+        }
+
+        while (true) {
+            System.out.print("Nuevo Código SNIES del programa (" + newCodeCampus + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            boolean codeCampus = false;
+            if (!input.isEmpty()) {
+                if (!input.equalsIgnoreCase(campusSelected.getCodeCampus())) {
+                    for (Campus campus : campusList) {
+                        if (campus.getCodeCampus().equalsIgnoreCase(input)) {
+                            System.out.println("La sede con este codigo ya esta registrada");
+                            codeCampus = true;
+                            break;
+                        }
+                    }
+                    if (!codeCampus) {
+                        newCodeCampus = input;
+                        break;
+                    }
+                } else {
+                    System.out.println("El nuevo código es igual al actual.");
+                    break;
+                }
+            } else {
+                System.out.println("No se permiten campos vacíos. Intente nuevamente.");
+            }
+        }
+
+        campusSelected.setNameCampus(newNameCampus);
+        campusSelected.setCodeCampus(newCodeCampus);
+        campusSelected.setCentralCampus(newCentralCampus);
+
+        System.out.println("Sede modificada exitosamente");
+    }
+
+    private static void deleteRegisterCampus() {                                      //método para eliminar campus registrados
+        System.out.println("=== Eliminar Registro de Sedes ===");
+        if (campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas.");
+            return;
+        }
+        showRegisterCampus();
+        System.out.print("Ingrese el índice de la sede que desea eliminar: ");
+        int indice = leerIndiceValido(campusList.size());
+        campusList.remove(indice);
+        System.out.println("Sede eliminada exitosamente.");
+    }
+
     private static String leerCadenaNoVacia() {
         String input;
         while (true) {
@@ -481,4 +575,18 @@ public class Presenter {
         }
     }
 
+    private static String leerCadenaNoVaciaTextoPunto() {
+        String input;
+        while (true) {
+            try {
+                input = reader.readLine().trim();
+                if (!input.isEmpty() && input.matches("^[a-zA-Z.\\s]+$")) {
+                    return input;
+                }
+                System.out.println("Ingrese un valor válido (texto y puntos). Intente nuevamente.");
+            } catch (IOException e) {
+                System.out.println("Error al leer la entrada.");
+            }
+        }
+    }
 }
