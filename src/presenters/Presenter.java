@@ -1,11 +1,10 @@
 package presenters;
 
 import enums.TypeJob;
-import models.Employee;
-import models.JobTitle;
-import models.Person;
+import models.*;
 import views.View;
 
+import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,15 +12,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Presenter {
-    private static List<Person> personList = new ArrayList<>();
-    private static List<Employee> employeeList = new ArrayList<>();
+    private static List<Person> personList;
+    private static List<Employee> employeeList;
+    private static List<Campus> campusList;
 
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static List<Company> companyList;
+    private static BufferedReader reader;
     private View view;
 
 
     public Presenter() {
         this.view = new View();
+        personList = new ArrayList<>();
+        employeeList = new ArrayList<>();
+        campusList = new ArrayList<>();
+        companyList = new ArrayList<>();
+        reader = new BufferedReader(new InputStreamReader(System.in));
     }
 
     public void menu() {
@@ -61,7 +67,35 @@ public class Presenter {
                         }
                     }while(opcionSubMenu != 0);
                 }
-
+                case 3 -> {
+                    do {
+                        view.showMenuCampus();
+                        opcionSubMenu = leerOpcion();
+                        switch (opcionSubMenu) {
+                            case 1 -> showRegisterCampus();
+                            case 2 -> showCampusCentral();
+                            case 3 -> registerCampus();
+                            case 4 -> modifyCampus();
+                            case 5 -> deleteRegisterCampus();
+                            case 0 -> view.showBye();
+                            default -> view.showInvalidateOption();
+                        }
+                    }while(opcionSubMenu != 0);
+                }
+                case 4 -> {
+                    do {
+                        view.showMenuCompany();
+                        opcionSubMenu = leerOpcion();
+                        switch (opcionSubMenu) {
+                            case 1 -> showRegisterCompany();
+                            case 2 -> registerCompany();
+                            case 3 -> registerCampus();
+                            case 4 -> modifyCampus();
+                            case 0 -> view.showBye();
+                            default -> view.showInvalidateOption();
+                        }
+                    }while(opcionSubMenu != 0);
+                }
                 case 0 ->
                         view.showBye();
                 default ->
@@ -107,6 +141,7 @@ public class Presenter {
             }
         }
     }
+
 
     private static void registerPerson() {
         System.out.println("=== Registrar Personas ===");
@@ -240,6 +275,7 @@ public class Presenter {
         //guardarEstudiantesEnArchivo();
     }
 
+<<<<<<< HEAD
     private static void showRegisterEmployees() {
         System.out.println("=== Empleados Registrados ===");
         if (employeeList.isEmpty()) {
@@ -252,6 +288,9 @@ public class Presenter {
             }
         }
     }
+=======
+
+>>>>>>> 0b497f750d5afde5a708941ae920e2782e1d1c1d
 
     public void matricularEstudiante_programa() {
         System.out.println("=== EMPLEADO - PERSONA ===");
@@ -294,8 +333,261 @@ public class Presenter {
     }
 
 
+    public void registerEmployeeCampus() {
+        System.out.println("=== EMPLEADO - SEDE ===");
+        if (employeeList.isEmpty()) {
+            System.out.println("No hay empleados registradas.");
+            return;
+        }
+
+        showRegisterEmployees();
+
+        System.out.print("Ingrese el índice de la sede en la que desee inscribir el empleado: ");
+        int indexCampus = leerIndiceValido(campusList.size());
+
+        Campus campusSelected = campusList.get(indexCampus);
+
+        if(campusList.isEmpty()){
+            System.out.println("No hay Sedes creadas ");
+            return;
+        }
+
+        showRegisterCampus();
+
+        System.out.println("Ingrese el indice del empleado que desea inscribir en la sede");
+        int indexEmployee = leerIndiceValido(employeeList.size());
+
+        Employee employeSelected = employeeList.get(indexEmployee);
+
+        boolean checkEmployeeSelected= employeSelected.getPerson_employees().contains(employeSelected);
+
+        if (checkEmployeeSelected) {
+            System.out.println("El empleado ya esta registrado en esta sede");
+        } else {
+            campusSelected.employeeCampus(employeSelected);
+            System.out.println("Empleado registrado en la sede exitosamente");
+        }
+    }
+
+    private static void showRegisterEmployees() {
+        System.out.println("=== Empleados Registrados ===");
+
+        if (employeeList.isEmpty()) {
+            System.out.println("No hay empleados registrados.");
+        } else {
+            int index = 0;
+            for (Employee employee : employeeList) {
+                System.out.println("Índice " + index + ": " + employee.getPerson_employees() + " (Cargo: " + employee.getJobTitle() + ")");
+                index++;
+            }
+        }
+    }
+
+    private static void showRegisterCampus() {
+        System.out.println("=== Sedes Registradas ===");
+
+        if (campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas.");
+        } else {
+            int index = 0;
+            for (Campus campus : campusList) {
+                System.out.println("Índice " + index + ": " + campus);
+                index++;
+            }
+        }
+    }
+
+    private static void registerCampus() {
+        System.out.println("=== Registrar Sedes ===");
+
+        String nameCampus= null;
+        String codeCampus = null;
+        boolean centralCampus = false;
+
+        // Ciclo para validar y registrar los datos del estudiante
+        while (true) {
+            // Si el codigo del campus no se ha registrado
+            if (codeCampus == null) {
+                System.out.print("Id Sede: ");
+                codeCampus = leerCadenaNoVacia();
+
+                // Validar si el campus ya esta registrado codeCampus
+                for (Campus campus : campusList) {
+                    if (campus.getCodeCampus().equalsIgnoreCase(codeCampus)) {
+                        System.out.println("Ya se encuentra una sede con el codigo proporcionado");
+                        codeCampus= null; // Reiniciar para volver a pedir el dato
+                        break;
+                    }
+                }
+            } // Si el nombre de la sede no se ha ingresado
+            else if (nameCampus == null) {
+                System.out.print("Nombres: ");
+                nameCampus = leerCadenaNoVaciaTexto();
+            } // Validar si es la sede principal
+            else if(centralCampus == false){
+                String auxCode = null;
+                System.out.println("Este es el campus central (SI/NO):");
+                auxCode = leerCadenaNoVacia();
+                if (auxCode.equalsIgnoreCase("si")) {
+                    centralCampus = true;
+                }else{
+                    centralCampus = false;
+                }
+            }
+
+            // Si se han ingresado todos los datos requeridos, registrar la persona
+            if (codeCampus != null && nameCampus!= null) {
+                campusList.add(new Campus(nameCampus, codeCampus, centralCampus, employeeList));
+                System.out.println("Sede registrada exitosamente");
+                //guardarCampusEnArchivo();
+                break; // Salir del bucle en caso de éxito
+            }
+        }
+    }
+    private static void showCampusCentral(){
+        System.out.println("=== Sedes principales ===");
+        if(campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas");
+        }else{
+            int index = 0;
+            for (Campus campus : campusList) {
+                if(campus.isCentralCampus() == true) {
+                    System.out.println("Índice " + index + ": " + campus);
+                    index++;
+                }else{
+                    System.out.println("No hay Sedes principales registradas");
+                }
+            }
+        }
+    }
+
+    private static void modifyCampus() {
+        System.out.println("=== Modificar SEDE ===");
+
+        if (campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas.");
+            return;
+        }
+
+       showRegisterCampus();
+
+        System.out.print("Ingrese el índice de la sede que desea modificar: ");
+        int indexCampus = leerIndiceValido(campusList.size());
+
+        Campus campusSelected = campusList.get(indexCampus);
+
+        String newNameCampus = campusSelected.getNameCampus();
+        String newCodeCampus = campusSelected.getCodeCampus();
+        boolean newCentralCampus = campusSelected.isCentralCampus();
 
 
+        while (true) {
+            System.out.print("Nuevo Nombre de la sede (" + newNameCampus + "): ");
+            String input = leerCadenaNoVaciaTextoPunto();
+            if (!input.isEmpty()) {
+                newNameCampus = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (texto y puntos). Intente nuevamente.");
+            }
+        }
+
+        while (true) {
+            System.out.print("Nuevo Código SNIES del programa (" + newCodeCampus + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            boolean codeCampus = false;
+            if (!input.isEmpty()) {
+                if (!input.equalsIgnoreCase(campusSelected.getCodeCampus())) {
+                    for (Campus campus : campusList) {
+                        if (campus.getCodeCampus().equalsIgnoreCase(input)) {
+                            System.out.println("La sede con este codigo ya esta registrada");
+                            codeCampus = true;
+                            break;
+                        }
+                    }
+                    if (!codeCampus) {
+                        newCodeCampus = input;
+                        break;
+                    }
+                } else {
+                    System.out.println("El nuevo código es igual al actual.");
+                    break;
+                }
+            } else {
+                System.out.println("No se permiten campos vacíos. Intente nuevamente.");
+            }
+        }
+
+        campusSelected.setNameCampus(newNameCampus);
+        campusSelected.setCodeCampus(newCodeCampus);
+        campusSelected.setCentralCampus(newCentralCampus);
+
+        System.out.println("Sede modificada exitosamente");
+    }
+
+    private static void deleteRegisterCampus() {                                      //método para eliminar campus registrados
+        System.out.println("=== Eliminar Registro de Sedes ===");
+        if (campusList.isEmpty()) {
+            System.out.println("No hay sedes registradas.");
+            return;
+        }
+        showRegisterCampus();
+        System.out.print("Ingrese el índice de la sede que desea eliminar: ");
+        int indice = leerIndiceValido(campusList.size());
+        campusList.remove(indice);
+        System.out.println("Sede eliminada exitosamente.");
+    }
+
+    private static void showRegisterCompany() {
+        System.out.println("=== Empresas Registradas ===");
+
+        if (companyList.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+        } else {
+            int index = 0;
+            for (Company company : companyList) {
+                System.out.println("Índice " + index + ": " + company);
+                index++;
+            }
+        }
+    }
+    private static void registerCompany() {
+        System.out.println("=== Registrar Empresa ===");
+
+        String nameCompany= null;
+        String codeCompany = null;
+
+        // Ciclo para validar y registrar los datos del estudiante
+        while (true) {
+            // Si el codigo del campus no se ha registrado
+            if (codeCompany == null) {
+                System.out.print("Id Empresa: ");
+                codeCompany = leerCadenaNoVacia();
+
+                // Validar si el campus ya esta registrado codeCampus
+                for (Company company : companyList) {
+                    if (company.getCodeCompany().equalsIgnoreCase(codeCompany)) {
+                        System.out.println("Ya se encuentra una empresa con el codigo proporcionado");
+                        codeCompany= null; // Reiniciar para volver a pedir el dato
+                        break;
+                    }
+                }
+            } // Si el nombre de la sede no se ha ingresado
+            else if (nameCompany == null) {
+                System.out.print("Nombre: ");
+                nameCompany = leerCadenaNoVaciaTexto();
+            } // Validar si es la sede principal
+
+
+            // Si se han ingresado todos los datos requeridos, registrar la persona
+            if (codeCompany != null && nameCompany!= null) {
+                companyList.add(new Company(nameCompany, codeCompany, campusList));
+                System.out.println("Empresa registrada exitosamente");
+                //guardarCampusEnArchivo();
+                break; // Salir del bucle en caso de éxito
+            }
+        }
+    }
 
     private static String leerCadenaNoVacia() {
         String input;
@@ -359,4 +651,18 @@ public class Presenter {
         }
     }
 
+    private static String leerCadenaNoVaciaTextoPunto() {
+        String input;
+        while (true) {
+            try {
+                input = reader.readLine().trim();
+                if (!input.isEmpty() && input.matches("^[a-zA-Z.\\s]+$")) {
+                    return input;
+                }
+                System.out.println("Ingrese un valor válido (texto y puntos). Intente nuevamente.");
+            } catch (IOException e) {
+                System.out.println("Error al leer la entrada.");
+            }
+        }
+    }
 }
