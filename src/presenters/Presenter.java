@@ -275,8 +275,7 @@ public class Presenter {
         //guardarEstudiantesEnArchivo();
     }
 
-<<<<<<< HEAD
-    private static void showRegisterEmployees() {
+    private static void showRegisterEmployeesesteban() {
         System.out.println("=== Empleados Registrados ===");
         if (employeeList.isEmpty()) {
             System.out.println("No hay empleados registrados.");
@@ -288,9 +287,6 @@ public class Presenter {
             }
         }
     }
-=======
-
->>>>>>> 0b497f750d5afde5a708941ae920e2782e1d1c1d
 
     public void matricularEstudiante_programa() {
         System.out.println("=== EMPLEADO - PERSONA ===");
@@ -369,7 +365,7 @@ public class Presenter {
         }
     }
 
-    private static void showRegisterEmployees() {
+    private void showRegisterEmployees() {
         System.out.println("=== Empleados Registrados ===");
 
         if (employeeList.isEmpty()) {
