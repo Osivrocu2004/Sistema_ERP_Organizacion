@@ -4,7 +4,6 @@ import enums.TypeJob;
 import models.*;
 import views.View;
 
-import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -275,14 +274,18 @@ public class Presenter {
         //guardarEstudiantesEnArchivo();
     }
 
-    private static void showRegisterEmployeesesteban() {
+    private static void showRegisterEmployees() {
         System.out.println("=== Empleados Registrados ===");
+        System.out.println(employeeList.size());
         if (employeeList.isEmpty()) {
             System.out.println("No hay empleados registrados.");
         } else {
             int index = 0;
             for (Employee employee : employeeList) {
-                System.out.println("Índice " + index + ": " + employee.getPerson_employees()+ "Cargo: " + employee.getJobTitle().getNameJobTitle() + ", " + employee.getJobTitle().getIdJobTitle() );
+                //TODO HACER QUE EL employee NO ME BOTE EL IS NULL
+                System.out.println("Índice " + index + ": Id_persona: " + employee.getPerson_employees().get(index).getId_person());/*+ ", Nombre: " + personList.get(index).getFistName()
+                        + ", Apellido: "+ personList.get(index).getLastName() + ", id: " +  TypeJob.DIRECTIVO.getCodigo() + ", Cargo: "
+                        + employee.getJobTitle().getNameJobTitle() + employeeList.get(index).getPerson_employees().get(index));*/
                 index++;
             }
         }
@@ -305,18 +308,18 @@ public class Presenter {
 
         System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)" +
                 "\nIngrese el número del cargo en el que desea registrar a la persona: ");
-
         int indexJobTitle = leerIndiceValido(TypeJob.values().length);
         String jobTitle = "";
         switch (indexJobTitle){
             case 1 -> jobTitle = String.valueOf(TypeJob.DIRECTIVO);
+            case 2 -> jobTitle = String.valueOf(TypeJob.OPERATIVO);
+            case 3 -> jobTitle = String.valueOf(TypeJob.ASISTENCIAL);
+            default -> System.out.println("Por favor ingrese un valor valido (1, 2, 3)");
         }
-
-
 
         int idCount = 0;
 
-        employeeList.add(new Employee(new JobTitle(idCount,jobTitle),person));
+        employeeList.add(new Employee(new JobTitle(idCount,jobTitle), person));
         // Validar si el estudiante ya está matriculado en el programa
         /*boolean estudianteMatriculado = selectEmployee.getPerson_employees().contains(selectEmployee);
 
@@ -365,19 +368,7 @@ public class Presenter {
         }
     }
 
-    private void showRegisterEmployees() {
-        System.out.println("=== Empleados Registrados ===");
 
-        if (employeeList.isEmpty()) {
-            System.out.println("No hay empleados registrados.");
-        } else {
-            int index = 0;
-            for (Employee employee : employeeList) {
-                System.out.println("Índice " + index + ": " + employee.getPerson_employees() + " (Cargo: " + employee.getJobTitle() + ")");
-                index++;
-            }
-        }
-    }
 
     private static void showRegisterCampus() {
         System.out.println("=== Sedes Registradas ===");
@@ -621,7 +612,7 @@ public class Presenter {
                 System.out.print("Ingrese un índice válido: ");
                 String input = reader.readLine().trim();
                 indice = Integer.parseInt(input);
-                if (indice >= 0 && indice < maximo) {
+                if (indice >= 0 && indice <= maximo) {
                     break;
                 }
                 System.out.println("Índice no válido. Intente nuevamente.");
