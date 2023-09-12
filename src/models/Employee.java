@@ -34,4 +34,11 @@ public class Employee {
     public void setPerson_employees(List<Employee> person_employees) {
         this.person_employees = person_employees;
     }
+
+    @Override
+    public String toString() {
+        return "Cargo: " + jobTitle +
+                ", person_employees: " + person_employees +
+                ", person: " + person;
+    }
 }

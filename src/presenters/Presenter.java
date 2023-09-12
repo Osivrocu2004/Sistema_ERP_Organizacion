@@ -242,13 +242,12 @@ public class Presenter {
 
     private static void showRegisterEmployees() {
         System.out.println("=== Empleados Registrados ===");
-
         if (employeeList.isEmpty()) {
             System.out.println("No hay empleados registrados.");
         } else {
             int index = 0;
             for (Employee employee : employeeList) {
-                System.out.println("Índice " + index + ": " + employee.getPerson_employees() + " (Cargo: " + employee.getJobTitle() + ")");
+                System.out.println("Índice " + index + ": " + employee.getPerson_employees()+ "Cargo: " + employee.getJobTitle().getNameJobTitle() + ", " + employee.getJobTitle().getIdJobTitle() );
                 index++;
             }
         }
@@ -282,18 +281,16 @@ public class Presenter {
 
         int idCount = 0;
 
-
-        Employee selectEmployee = new Employee(new JobTitle(idCount,jobTitle),person);
-        //TODO REVISAR COMO ASOCIAR A LA PERSONA PARA QUE SEA EMPLEADO! ESTA BOTANDO NullPointerException EN LA SENTENCIA 289
+        employeeList.add(new Employee(new JobTitle(idCount,jobTitle),person));
         // Validar si el estudiante ya está matriculado en el programa
-        boolean estudianteMatriculado = selectEmployee.getPerson_employees().contains(selectEmployee);
+        /*boolean estudianteMatriculado = selectEmployee.getPerson_employees().contains(selectEmployee);
 
         if (estudianteMatriculado) {
             System.out.println("El estudiante ya está matriculado en este programa.");
         } else {
             selectEmployee.person_assigned_employee(selectEmployee);
             System.out.println("Estudiante matriculado exitosamente en el programa académico.");
-        }
+        }*/
     }
 
 
