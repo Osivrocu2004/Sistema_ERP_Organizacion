@@ -275,20 +275,6 @@ public class Presenter {
         //guardarEstudiantesEnArchivo();
     }
 
-    private static void showRegisterEmployees() {
-        System.out.println("=== Empleados Registrados ===");
-        if (employeeList.isEmpty()) {
-            System.out.println("No hay empleados registrados.");
-        } else {
-            int index = 0;
-            for (Employee employee : employeeList) {
-                System.out.println("Índice " + index + ": " + employee.getPerson_employees()+ "Cargo: " + employee.getJobTitle().getNameJobTitle() + ", " + employee.getJobTitle().getIdJobTitle() );
-                index++;
-            }
-        }
-    }
-
-
     public void matricularEstudiante_programa() {
         System.out.println("=== EMPLEADO - PERSONA ===");
 
