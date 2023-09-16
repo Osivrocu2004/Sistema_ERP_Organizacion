@@ -89,8 +89,9 @@ public class Presenter {
                         switch (opcionSubMenu) {
                             case 1 -> showRegisterCompany();
                             case 2 -> registerCompany();
-                            case 3 -> registerCampus();
-                            case 4 -> modifyCampus();
+                            case 3 -> modifyCompany();
+                            case 4 -> deleteRegisterCaompany(); //Falta ver si la empresa esta asociada a una sede o viceversa no se
+                            //puede eliminar tan facilmente y habria que desvincularla primero de la sede
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
@@ -490,7 +491,7 @@ public class Presenter {
         }
 
         while (true) {
-            System.out.print("Nuevo Código SNIES del programa (" + newCodeCampus + "): ");
+            System.out.print("Nuevo Código de la sede (" + newCodeCampus + "): ");
             String input = leerCadenaNoVaciaTexto();
             boolean codeCampus = false;
             if (!input.isEmpty()) {
@@ -584,6 +585,81 @@ public class Presenter {
                 break; // Salir del bucle en caso de éxito
             }
         }
+    }
+
+    private static void modifyCompany() {
+        System.out.println("=== Modificar  Empresa ===");
+
+        if (companyList.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+            return;
+        }
+
+        showRegisterCompany();
+
+        System.out.print("Ingrese el índice de la empresa que desea modificar: ");
+        int indexCompany= leerIndiceValido(companyList.size());
+
+        Company companySelected = companyList.get(indexCompany);
+
+        String newNameCompany = companySelected.getNameCompany();
+        String newCodeCompany = companySelected.getCodeCompany();
+
+
+        while (true) {
+            System.out.print("Nuevo Nombre de la empresa (" + newNameCompany + "): ");
+            String input = leerCadenaNoVaciaTextoPunto();
+            if (!input.isEmpty()) {
+                newNameCompany = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (texto y puntos). Intente nuevamente.");
+            }
+        }
+
+        while (true) {
+            System.out.print("Nuevo Código de la empresa (" + newCodeCompany + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            boolean codeCampus = false;
+            if (!input.isEmpty()) {
+                if (!input.equalsIgnoreCase(companySelected.getCodeCompany())) {
+                    for (Company company : companyList) {
+                        if (company.getCodeCompany().equalsIgnoreCase(input)) {
+                            System.out.println("La empresa con este codigo ya esta registrada");
+                            codeCampus = true;
+                            break;
+                        }
+                    }
+                    if (!codeCampus) {
+                        newCodeCompany = input;
+                        break;
+                    }
+                } else {
+                    System.out.println("El nuevo código es igual al actual.");
+                    break;
+                }
+            } else {
+                System.out.println("No se permiten campos vacíos. Intente nuevamente.");
+            }
+        }
+
+        companySelected.setNameCompany(newNameCompany);
+        companySelected.setCodeCompany(newCodeCompany);
+
+        System.out.println("Empresa modificada exitosamente");
+    }
+
+    private static void deleteRegisterCaompany() {                                      //método para eliminar campus registrados
+        System.out.println("=== Eliminar Registro de la Empresa ===");
+        if (companyList.isEmpty()) {
+            System.out.println("No hay empresas registradas.");
+            return;
+        }
+        showRegisterCampus();
+        System.out.print("Ingrese el índice de la empresa que desea eliminar: ");
+        int indexCompany = leerIndiceValido(companyList.size());
+        companyList.remove(indexCompany);
+        System.out.println("Empresa eliminada exitosamente.");
     }
 
     private static String leerCadenaNoVacia() {
