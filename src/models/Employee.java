@@ -6,7 +6,7 @@ public class Employee {
 
     private JobTitle jobTitle;
 
-    List<Employee> person_employees;
+    List<Person> person_employees;
 
     Person person;
 
@@ -15,9 +15,9 @@ public class Employee {
         this.person = person;
     }
 
-    public void person_assigned_employee(Employee employee) {
+    /*public void person_assigned_employee(Employee employee) {
         person_employees.add(employee);
-    }
+    }*/
 
     public JobTitle getJobTitle() {
         return jobTitle;
@@ -27,11 +27,11 @@ public class Employee {
         this.jobTitle = jobTitle;
     }
 
-    public List<Employee> getPerson_employees() {
+    public List<Person> getPerson_employees() {
         return person_employees;
     }
 
-    public void setPerson_employees(List<Employee> person_employees) {
+    public void setPerson_employees(List<Person> person_employees) {
         this.person_employees = person_employees;
     }
 
