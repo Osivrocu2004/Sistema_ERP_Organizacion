@@ -15,10 +15,6 @@ public class Employee {
         this.person = person;
     }
 
-    /*public void person_assigned_employee(Employee employee) {
-        person_employees.add(employee);
-    }*/
-
     public JobTitle getJobTitle() {
         return jobTitle;
     }
@@ -32,6 +28,22 @@ public class Employee {
     }
 
     public void setPerson_employees(List<Person> person_employees) {
+        this.person_employees = person_employees;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public List<Person> getPersonEmployees() {
+        return person_employees;
+    }
+
+    public void setPersonEmployees(List<Person> person_employees) {
         this.person_employees = person_employees;
     }
 

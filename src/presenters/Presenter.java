@@ -57,10 +57,10 @@ public class Presenter {
                         view.showMenuEmployees();
                         opcionSubMenu = leerOpcion();
                         switch (opcionSubMenu) {
-                            case 1 -> matricularEstudiante_programa();
-                            //case 2 -> modificarProgramaAcademico();
-                            //case 3 -> eliminarProgramaAcademico();
-                            case 4 -> showRegisterEmployees();
+                            case 1 -> showRegisterEmployees();
+                            case 2 -> matricularEstudiantePrograma();
+                            case 3 -> changeEmployee();
+                            case 4 -> deleteEmployee();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
@@ -283,17 +283,15 @@ public class Presenter {
         } else {
             int index = 0;
             for (Employee employee : employeeList) {
-                //TODO HACER QUE EL employee NO ME BOTE EL IS NULL
-                System.out.println("Índice " + index + ": Id_persona: " + employee.getPerson_employees().get(index).getId_person());/*+ ", Nombre: " + personList.get(index).getFistName()
-                        + ", Apellido: "+ personList.get(index).getLastName() + ", id: " +  TypeJob.DIRECTIVO.getCodigo() + ", Cargo: "
-                        + employee.getJobTitle().getNameJobTitle() + employeeList.get(index).getPerson_employees().get(index));*/
+                System.out.println("Índice: " + index + ", Cargo: " + employee.getJobTitle().getNameJobTitle() + ", Id_persona: " + employee.getPerson().getId_person()
+                        + ", Nombre_persona: " + employee.getPerson().getFistName() +", Apellido_persona: " + employee.getPerson().getLastName());
                 index++;
             }
         }
     }
 
 
-    public void matricularEstudiante_programa() {
+    public void matricularEstudiantePrograma() {
         System.out.println("=== EMPLEADO - PERSONA ===");
 
         if (personList.isEmpty()) {
@@ -319,9 +317,7 @@ public class Presenter {
             default -> System.out.println("Por favor ingrese un valor valido (1, 2, 3)");
         }
 
-        int idCount = 0;
-
-        employeeList.add(new Employee(new JobTitle(idCount,jobTitle), person));
+        employeeList.add(new Employee(new JobTitle(jobTitle), person));
         // Validar si el estudiante ya está matriculado en el programa
         /*boolean estudianteMatriculado = selectEmployee.getPerson_employees().contains(selectEmployee);
 
@@ -331,6 +327,129 @@ public class Presenter {
             selectEmployee.person_assigned_employee(selectEmployee);
             System.out.println("Estudiante matriculado exitosamente en el programa académico.");
         }*/
+    }
+
+    public String jobTitles(){
+        System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)" +
+                "\nIngrese el número del cargo en el que desea registrar a la persona: ");
+        int indexJobTitle = leerIndiceValido(TypeJob.values().length);
+        String jobTitle = "";
+        switch (indexJobTitle){
+            case 1 -> jobTitle = String.valueOf(TypeJob.DIRECTIVO);
+            case 2 -> jobTitle = String.valueOf(TypeJob.OPERATIVO);
+            case 3 -> jobTitle = String.valueOf(TypeJob.ASISTENCIAL);
+            default -> System.out.println("Por favor ingrese un valor valido (1, 2, 3)");
+        }
+        return jobTitle;
+    }
+
+    public void changeEmployee() {
+        System.out.println("=== Modificar Registro de empleado ===");
+
+        // Verificar si hay estudiantes registrados
+        if (employeeList.isEmpty()) {
+            System.out.println("No hay empleados registrados.");
+            return;
+        }
+
+        // Mostrar la lista de personas registradas
+        showRegisterEmployees();
+
+        // Solicitar al usuario que ingrese el índice del estudiante que desea modificar
+        System.out.print("Ingrese el índice del estudiante que desea modificar: ");
+        int indice = leerIndiceValido(personList.size());
+        Employee selectEmployees = employeeList.get(indice);
+
+        // Inicializar variables con los valores actuales del estudiante seleccionado
+        String jobTitle = selectEmployees.getJobTitle().getNameJobTitle();
+        String idPerson = selectEmployees.getPerson().getId_person();
+        String firstnamePerson = selectEmployees.getPerson().getFistName();
+        String lastnamePerson = selectEmployees.getPerson().getLastName();
+
+        // Solicitar al usuario que ingrese el cargo del empleado
+        while (true) {
+            System.out.print("Nuevo Cargo (" + jobTitle + "): ");
+            System.out.println("=== CARGOS DISPONIBLES ===\n1. " + TypeJob.DIRECTIVO + "(D)" + "\n2. " + TypeJob.ASISTENCIAL + "(A)" + "\n3. " + TypeJob.OPERATIVO + "(O)" +
+                    "\nIngrese el número del cargo en el que desea registrar a la persona: ");
+            int indexJobTitle = leerIndiceValido(TypeJob.values().length);
+            String jobTitleCase = "";
+            if (indexJobTitle >= 1 && indexJobTitle <=3) {
+                switch (indexJobTitle){
+                    case 1 -> jobTitleCase = String.valueOf(TypeJob.DIRECTIVO);
+                    case 2 -> jobTitleCase = String.valueOf(TypeJob.OPERATIVO);
+                    case 3 -> jobTitleCase = String.valueOf(TypeJob.ASISTENCIAL);
+                    default -> System.out.println("Por favor ingrese un valor valido (1, 2, 3)");
+                }
+                jobTitle = jobTitleCase;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            }
+        }
+
+        // Solicitar al usuario que ingrese el nuevo código de estudiante
+        while (true) {
+            System.out.print("Nuevo ID de la Persona (" + idPerson + "): ");
+            String input = leerCodigoNumerico();
+            boolean idPersonaRegistrada = false;
+            if (!input.isEmpty()) {
+                for (Person person : personList) {
+                    if (person.getId_person().equals(input) && !person.getId_person().equals(idPerson)) {
+                        System.out.println("La persona con este código ya está registrado.");
+                        idPersonaRegistrada = true;
+                        break;
+                    }
+                }
+                if (!idPersonaRegistrada) {
+                    idPerson = input;
+                    break;
+                }
+            } else {
+                System.out.println("No se permiten campos vacíos. Intente nuevamente.");
+            }
+        }
+
+        // Solicitar al usuario que ingrese el nuevo nombre
+        while (true) {
+            System.out.print("Nuevo Nombres (" + firstnamePerson + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            if (!input.isEmpty()) {
+                firstnamePerson = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            }
+        }
+        // Solicitar al usuario que ingrese el nuevo apellido
+        while (true) {
+            System.out.print("Nuevo Nombres (" + lastnamePerson + "): ");
+            String input = leerCadenaNoVaciaTexto();
+            if (!input.isEmpty()) {
+                lastnamePerson = input;
+                break;
+            } else {
+                System.out.println("Ingrese un valor válido (solo texto). Intente nuevamente.");
+            }
+        }
+        // Actualizar los datos del empleado con los valores nuevos
+        selectEmployees.setJobTitle(new JobTitle(jobTitle));
+        selectEmployees.setPerson(new Person(idPerson,firstnamePerson,lastnamePerson));
+        System.out.println("Empleado modificado exitosamente.");
+        //guardarEstudiantesEnArchivo();
+    }
+
+    public void deleteEmployee(){
+        System.out.println("=== Eliminar Registro de Empleado ===");
+        if (employeeList.isEmpty()) {
+            System.out.println("No hay Empleados registrados.");
+            return;
+        }
+        showRegisterEmployees();
+        System.out.print("Ingrese el índice del estudiante que desea eliminar: ");
+        int indice = leerIndiceValido(employeeList.size());
+        employeeList.remove(indice);
+        System.out.println("Empleado eliminado exitosamente.");
+        //guardarEstudiantesEnArchivo();
     }
 
 
@@ -360,7 +479,7 @@ public class Presenter {
 
         Employee employeSelected = employeeList.get(indexEmployee);
 
-        boolean checkEmployeeSelected= employeSelected.getPerson_employees().contains(employeSelected);
+        boolean checkEmployeeSelected= employeSelected.getPersonEmployees().contains(employeSelected);
 
         if (checkEmployeeSelected) {
             System.out.println("El empleado ya esta registrado en esta sede");
