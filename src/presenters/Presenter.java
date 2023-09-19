@@ -76,6 +76,7 @@ public class Presenter {
                             case 3 -> registerCampus();
                             case 4 -> modifyCampus();
                             case 5 -> deleteRegisterCampus();
+                            case 6 -> addEmployee();
                             case 0 -> view.showBye();
                             default -> view.showInvalidateOption();
                         }
@@ -104,6 +105,39 @@ public class Presenter {
 
             }
         } while (opcionMainMenu != 0);
+    }
+
+    private void addEmployee() {
+        String id_empleado = (leerCodigoNumerico());
+        String id_campus = (leerCodigoNumerico());
+        Campus campus = buscarCampus(id_campus);
+        if (campus != null){
+            Employee employee = buscarEmpleado(id_empleado);
+            if (employee != null){
+                campus.employeeCampus(employee);
+            }else {
+                System.out.println("El empleado con id " + id_empleado + " No fue encontrado");
+            }
+        }else {
+            System.out.println("El campus con id " + id_campus + " No fue encontrado" );
+        }
+
+    }
+
+    private Employee buscarEmpleado(String id){
+        for (Employee e: employeeList) {
+            if (e.getPerson().getId_person().equals(id)){
+                return e;
+            }
+        }return null;
+    }
+
+    private Campus buscarCampus(String id){
+        for (Campus c: campusList) {
+            if (c.getCodeCampus().equals(id)){
+                return c;
+            }
+        }return null;
     }
 
     private static int leerOpcion() {

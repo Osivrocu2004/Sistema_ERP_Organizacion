@@ -13,7 +13,9 @@ public class Campus {
         this.centralCampus = centralCampus;
         this.nameCampus = nameCampus;
         this.codeCampus = codeCampus;
-        this.employeeCampus = employeeCampus;
+        this.employeeCampus = employeeCampus; // new list, no recibirla por parametro
+        // hay que validar empleados existentes antes de agregar?
+        // los metodos de crud para la lista empleados van aqui
     }
 
     public void employeeCampus(Employee employee){
